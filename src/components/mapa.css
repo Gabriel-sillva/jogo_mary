@@ -24,3 +24,66 @@ body {
     border: 2px solid rgb(84, 224, 224);
     border-radius: 10px;
 }
+
+
+.painel {
+    background: #5a0606;
+    border: 2px solid #bee3fc;
+    padding: 1rem;
+    margin-bottom: 12px;
+    border-radius: 12px;
+}
+
+
+.painel-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+
+.botao {
+    background: #c90cc9;
+    color: black;
+    border: 0;
+    padding: 6px 10px;
+    border-radius: 10;
+    cursor: pointer;
+}
+
+
+.botao:hover{
+    background: #0240ec;
+    text-decoration: underline;
+}
+
+
+.painel span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0240ec;
+}
+
+
+.lista-pontos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+.lista-pontos-item {
+    display: grid;
+    grid-template-columns: 48px 1fr 110px;
+    gap: 10px;
+    align-items: center;
+    padding: 6px 0;
+    border-top: 1px dashed #ddd;   
+}
+
+
+.dist {
+    text-align: right;
+    color: #0240ec;
+}

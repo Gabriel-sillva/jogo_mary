@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { marker } from "leaflet";
 
 
@@ -16,7 +16,7 @@ export default function Mapa() {
         if(!origem) return null;
 
         const a = L.latLng(origem)
-        const b = L.latLng(alvo.lat, alvo.Ing)
+        const b = L.latLng(alvo.lat, alvo.lng)
         return a.distanceTo(b);
     }
 
@@ -103,6 +103,24 @@ export default function Mapa() {
                         Limpar Pontos!
                     </button>
                 </div>
+
+                {pontos.length === 0 ?(
+                    <p>Nenhum ponto adicionado. Clique no mapa para adicionar</p>
+                ) : (
+                    <ul className="lista-pontos">
+                        {pontosOrdenados.map((p) => (
+                            <li key={p.id} className="lista-pontos-item">
+                                <span>#{p.id}</span>
+                                <span>
+                                    {p.lat.toFixed(5)}, {p.lng.toFixed(5)}
+                                </span>
+                                <span className="dist">
+                                    {formatarM(p.distanciaM)}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </section>
 
             <MapContainer
@@ -122,6 +140,17 @@ export default function Mapa() {
                     </Marker>
                 )}
 
+                {pontos.map((p) => (
+                    <Marker key={p.id} position={[p.lat, p.lng]}>
+                        <Popup>
+                            <div>
+                                <strong>Ponto #{p.id}</strong>
+                                <p>Distancia: {formatarM(p.distanciaM)}</p>
+                            </div>
+                        </Popup>
+                    </Marker>
+                ))}
+                <ClickHandler onAdd={adicionarPonto} />
             </MapContainer>
         </section>
     )

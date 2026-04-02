@@ -2,9 +2,27 @@
     {
         "id": "q1",
         "titulo" : "Pergunta 1",
-        "prompt" : "Qual elemento é esse?",
-        "resposta" : ["sangue", "conhecimento"],
+        "prompt" : "Quem é o principal vilão de ORDEM paranormal? ",
+        "resposta" : ["Gal", "Kian", "Joui", "Anfitrião"],
         "dica" : "",
-        "icon" : ""
+        "icon" : "eyeball.png"
+    },
+
+    {
+        "id": "q2",
+        "titulo" : "Pergunta 2",
+        "prompt" : " Quem é o principal vilão de sinais do outro lado? ",
+        "resposta" : ["Anfitrião", "Amigo imaginário", "Estrangeiro", "Kian"],
+        "dica" : "",
+        "icon" : "eyeball.png"
+    },
+
+    {
+        "id": "q3",
+        "titulo" : "Pergunta 3",
+        "prompt" : "qual dos integrantes da ordo calamitas ganhou os jogos do anfritrião?",
+        "resposta" : ["Faustus", "Amalia", "Celestine"],
+        "dica" : "",
+        "icon" : "eyeball.png"
     }
 ]

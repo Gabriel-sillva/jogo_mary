@@ -1,9 +1,7 @@
-import Mapa from "./components/mapa";
-import "./components/mapa.css"
-
+import Fases from "./components/fases"
 
 export default function App(){
     return (
-        <Mapa/>
+        <Fases />
     )
 }

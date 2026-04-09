@@ -64,5 +64,4 @@ export default function Fases() {
             </header>
         </main>
     )
-
 }

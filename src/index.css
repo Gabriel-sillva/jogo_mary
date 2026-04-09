@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Coming+Soon&display=swap');
+
+
+:root{
+    --bg: #4d0909;
+    --bg2:  #9b2424;
+    --text:  #fff;
+    --primary: #c91616;
+    --primary-claro: #ec4c4c;
+    --primary-escuro: #5f0c0c;
+    --primary-text:  #520e0e;
+ 
+
+    --secundary: #d67322;
+    --secundary-claro: #ecb767;
+    --secundary-escuro: #815708;
+    --secundary-text: #3d0c0c;
+    --ring: #06bda4;
+    --border: #b60d0d;
+    --border2:  #7c0842;
+    --border3:  #091f7e;
+    --accent:  #da1990;
+    --accent-bg: #520845;
+    --accent-text: #b41fa0;
+ 
+
+    --shadow: #0e0101;
+    --hover-shadow: #4e4c4c;
+    --accent-shadow: #5d89bb;
+    --locked: #1c6969;
+ 
+
+    --solved-border: #43c1ca;
+    --solved-bg: #0d5963;
+ 
+    
+    --white: #fff;
+    --black: #000000;
+    --error: #ff0000;
+    --success:  #51ff00;
+
+}
+
+
+body {
+    font-family: "Comic Neue", cursive;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.5;
+}
+
+
+h1, h2, h3 {
+    font-family: "Coming Soon", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    
+}

@@ -38,7 +38,7 @@ export default function Fases() {
             total: total,
             porcentagem: porcentagem
         }
-    }, [resolvidos, total])
+    }, [resolvido, total])
 
     return(
         <main className="questoes">
@@ -54,12 +54,12 @@ export default function Fases() {
                         aria-valuemax={100}
                         aria-valuenow={progresso.porcentagem}
                         aria-label={`Progresso: ${progresso.resolvido} de ${progresso.total} resolvidas`}
-                        style={{width: `${progresso.porcentagem}%`}}>
+                        style={{width: `${progresso.porcentagem}%`}}/>
                     
                     <span className="progress-label">
                         {progresso.resolvido} / {progresso.total}
                     </span>
-                    </div>
+                    
                 </div>
             </header>
         </main>

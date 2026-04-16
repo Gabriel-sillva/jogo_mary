@@ -59,9 +59,15 @@ export default function Fases() {
                     <span className="progress-label">
                         {progresso.resolvido} / {progresso.total}
                     </span>
-                    
                 </div>
             </header>
+            <IconGrid
+                questoes = {QUESTOES}
+                onOpen = {handleOpen}
+                modalOpen = {Boolean(selecionada)}
+                trancada = {trancada}
+                resolvidas = {resolvidas}
+            />
         </main>
     )
 }

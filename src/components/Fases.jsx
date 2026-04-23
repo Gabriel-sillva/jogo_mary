@@ -1,6 +1,8 @@
+import IconGrid from "./IconGrid"
 import { useMemo, useState } from "react"
 import QUESTOES from "../../public/data/perguntas.json"
 import "./fases.css"
+import QuestionDialog from "./QuestionDialog";
 
 
 export default function Fases() {
@@ -64,10 +66,21 @@ export default function Fases() {
             <IconGrid
                 questoes = {QUESTOES}
                 onOpen = {handleOpen}
-                modalOpen = {Boolean(selecionada)}
-                trancada = {trancada}
-                resolvidas = {resolvidas}
+                modalOpen = {Boolean(selecionado)}
+                trancada = {trancado}
+                resolvidas = {resolvido}
             />
+
+            {selecionado && (
+                <QuestionDialog
+                    questoes = {selecionado}
+                    index={QUESTOES.findIndex((q) => q.id === selecionado.id)}
+                    total = {total}
+                    onClose = {handleClose}
+                    onCorrect = {handleCorrect}
+                />
+            )}
+
         </main>
     )
 }

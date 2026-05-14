@@ -85,8 +85,63 @@ export default function QuestionDialog({
                 >
                     Fechar
                 </button>
-
             </header>
+            <section className="dialog-contet" tabIndex={-1}>
+                <div className="dialog-card">
+
+                    <>
+                    <p className="question-prompt">
+                        {questoes.prompt}
+                    </p>
+                    <form className="question-from" onSubmit={handleSubmit}>
+                        <label className="question-label"
+                            htmlFor="resposta"> 
+                            sua resposta:
+                        </label>
+                        <inpunt
+                            id="resposta"
+                            className="question-inpunt"
+                            type="text"
+                            autoComplete="off"
+                            aria-describedbby="feedback"
+                            aria-invalid={feedback.type === "errp" ? "true" : "false"} 
+                            value={resposta}
+                            onChance={ (e) => setResposta(e.target.value)}
+                            disabled={isCorrect}
+                            palceholder="Escreva sua resposta aqui"
+                        />
+                        <div
+                            className={`question-feedback
+                                question-feedback--${feedback.type}`}
+                                id="feedback"
+                                aria-live="polite"
+                        >
+                            {feedback.msg}
+                        </div>
+                        {!isCorrect(
+                            <div className="questios-actions">
+                                <button type="submit" className="btn btn-primary"> Confirmar </button>
+
+                                <button className="bnt" type="button" onClick={onclose}> Voltar </button>
+
+                            </div>
+                        ) : (
+                            <div className="question-actions">
+                                <button
+                                    className="btn bnt-success"
+                                    type="buttom"
+                                    aria-label="Avançar para proxima pergunta"
+                                    onClick={() => {onCorrect(questoes.id); onclose}}
+                                >
+
+                                </button>
+                            </div>
+                        )}
+                    </form>
+                    </>
+
+                </div>
+            </section>
 
         </div>
     )

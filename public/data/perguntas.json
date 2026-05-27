@@ -5,7 +5,7 @@
         "prompt" : "Quem é o principal vilão de ORDEM paranormal? ",
         "resposta" : ["Gal", "Kian", "Joui", "Anfitrião"],
         "dica" : "",
-        "icon" : "eyeball.png"
+        "icon" : "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTRlYWFjN3AwcXFibjFibDFjNjE2cHcwM3g0Y2RjMmVuMm03NjZrYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F4E4Q13dUuGoRHbbh5/giphy.gif"
     },
 
     {
@@ -14,7 +14,7 @@
         "prompt" : " Quem é o principal vilão de sinais do outro lado? ",
         "resposta" : ["Anfitrião", "Amigo imaginário", "Estrangeiro", "Kian"],
         "dica" : "",
-        "icon" : "eyeball.png"
+        "icon" : "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTRlYWFjN3AwcXFibjFibDFjNjE2cHcwM3g0Y2RjMmVuMm03NjZrYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F4E4Q13dUuGoRHbbh5/giphy.gif"
     },
 
     {
@@ -23,6 +23,6 @@
         "prompt" : "qual dos integrantes da ordo calamitas ganhou os jogos do anfritrião?",
         "resposta" : ["Faustus", "Amalia", "Celestine"],
         "dica" : "",
-        "icon" : "eyeball.png"
+        "icon" : "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTRlYWFjN3AwcXFibjFibDFjNjE2cHcwM3g0Y2RjMmVuMm03NjZrYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F4E4Q13dUuGoRHbbh5/giphy.gif"
     }
 ]

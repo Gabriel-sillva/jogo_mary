@@ -1,118 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function QuestionDialog({ questao, onClose, onResponderSucesso }) {
-  const [respostaUser, setRespostaUser] = useState("");
-  const [status, setStatus] = useState("inicial"); // 'inicial', 'sucesso', 'erro'
-  const [falaAtual, setFalaAtual] = useState(questao.falaInicial);
-
   if (!questao) return null;
 
-  // Descobrir qual sprite exibir baseado no status da resposta
-  let spriteExibido = questao.sprite;
-  if (status === "sucesso") spriteExibido = questao.spriteSucesso;
-  if (status === "erro") spriteExibido = questao.spriteErro;
+  const [respostaUser, setRespostaUser] = useState("");
+  const [status, setStatus] = useState("inicial"); 
+  const [falaAtual, setFalaAtual] = useState("");
 
-  const handleValidarResposta = (e) => {
+  useEffect(() => {
+    setFalaAtual(questao.falaInicial);
+    setStatus("inicial");
+    setRespostaUser("");
+  }, [questao]);
+
+  const handleValidar = (e) => {
     e.preventDefault();
+    if (!respostaUser.trim()) return;
 
-    // Limpa espaços e transforma em maiúsculas para comparar sem erro de digitação
-    const respostaFormatada = respostaUser.trim().toUpperCase();
-    
-    // Verifica se o que o utilizador digitou existe dentro do array de respostas do teu JSON
-    const acertou = questao.resposta.some(
-      (resp) => resp.trim().toUpperCase() === respostaFormatada
-    );
+    const formatada = respostaUser.trim().toUpperCase();
+    const respostasValidas = Array.isArray(questao.resposta) ? questao.resposta : [questao.resposta];
+    const acertou = respostasValidas.some(r => r.toString().trim().toUpperCase() === formatada);
 
     if (acertou) {
       setStatus("sucesso");
-      setFalaAtual(`Caramba, você é gênio! Conseguimos fechar a fenda! Pegue isto, vai te ajudar no enigma final: a pista completa é "${questao.pistaCompleta}".`);
+      setFalaAtual(`Incrível! Código corrigido. Pegue este fragmento para o terminal: "${questao.pistaCompleta}"`);
     } else {
       setStatus("erro");
-      setFalaAtual("Ih, deu ruim... Esse código não funcionou e a estabilização falhou. Tenta analisar com calma e tenta outra vez, sei que consegues!");
+      setFalaAtual("Eita... a fenda rejeitou esse comando. Dê uma olhada na sintaxe e tente de novo!");
     }
   };
 
-  const handleConcluir = () => {
-    if (status === "sucesso") {
-      // Passa para o App.jsx que esta questão foi resolvida para libertar a recompensa/pista
-      onResponderSucesso(questao.id, questao.pistaCompleta);
-    }
+  const handleColetar = () => {
+    onResponderSucesso(questao.id, questao.pistaCompleta);
     onClose();
   };
 
   return (
-    <div className="quiz-overlay">
-      {/* Classe dinâmica injetada para mudar a cor da borda dependendo do acerto/erro */}
-      <div className={`quiz-modal ${status === "sucesso" ? "sucesso" : status === "erro" ? "erro" : ""}`}>
+    <div className="vn-overlay">
+      <div className="cyber-modal">
+        <h3 className="highlight" style={{ textAlign: "center", marginTop: 0 }}>⚡ {questao.titulo.toUpperCase()} ⚡</h3>
         
-        {/* Cabeçalho da Missão */}
-        <div className="quiz-header">
-          <h3 className="quiz-title">⚠️ {questao.titulo}</h3>
-        </div>
-
-        {/* Zona do Personagem estilo Visual Novel */}
-        <div className="quiz-character-section">
-          <img 
-            src={`/${spriteExibido}`} 
-            alt={questao.personagem} 
-            className="quiz-character-sprite"
-            onError={(e) => {
-              e.target.src = "https://img.icons8.com/isometric/50/spider.png";
-            }}
-          />
-          <div className="quiz-dialogue-box">
-            <h4 className="quiz-character-name">{questao.personagem}</h4>
-            <p className="quiz-character-speech">"{falaAtual}"</p>
+        {/* CORPO DO DIÁLOGO REESTRUTURADO COM FOTO */}
+        <div className="vn-body">
+          {questao.sprite && (
+            <div className="vn-avatar-container">
+              <img 
+                src={questao.sprite} 
+                alt={questao.personagem} 
+                className="vn-avatar" 
+                onError={(e) => {
+                  // Fallback caso a imagem suma ou quebre
+                  e.target.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+          <div className="vn-content">
+            <p className="vn-speaker" style={{ margin: "0 0 5px 0" }}>{questao.personagem}:</p>
+            <p className="vn-text">"{falaAtual}"</p>
           </div>
         </div>
 
-        {/* Formulário de Resposta */}
-        {status !== "sucesso" && (
-          <form onSubmit={handleValidarResposta} className="quiz-modal" style={{ padding: 0, border: "none", boxShadow: "none" }}>
-            <div className="quiz-prompt-box">
-              <p className="quiz-prompt-text"><strong>DESAFIO:</strong> {questao.prompt}</p>
-            </div>
-            
+        {status === "inicial" && (
+          <form onSubmit={handleValidar} className="cyber-form">
+            <p className="vn-prompt"><strong>DESAFIO:</strong> {questao.prompt}</p>
             <input 
-              type="text" 
-              className="quiz-input"
-              placeholder="Digita a tua resposta aqui..."
+              type="text"
+              className="cyber-input"
+              placeholder="Digite sua resposta..."
               value={respostaUser}
-              onChange={(e) => setRespostaUser(e.target.value)}
-              disabled={status === "sucesso"}
+              onChange={e => setRespostaUser(e.target.value)}
               autoFocus
             />
-
-            <button type="submit" className="btn-quiz-submit">
-              📡 ENVIAR CÓDIGO DE CORREÇÃO
-            </button>
+            <button type="submit" className="btn btn-accent">INJETAR</button>
           </form>
         )}
 
-        {/* Mensagens de Feedback */}
-        {status === "sucesso" && (
-          <div className="quiz-feedback feedback-sucesso">
-            🎉 FENDA INTERCEPTADA COM SUCESSO!
-          </div>
-        )}
-        
-        {status === "erro" && (
-          <div className="quiz-feedback feedback-erro">
-            ❌ CÓDIGO INCORRETO. DETETADA REJEIÇÃO NA MATRIZ!
-          </div>
-        )}
-
-        {/* Botão de Ação de Fecho */}
-        {status === "sucesso" ? (
-          <button onClick={handleConcluir} className="btn-quiz-submit">
-            💾 COLETAR PISTA E CONTINUAR
-          </button>
-        ) : (
-          <button onClick={onClose} className="btn-quiz-close">
-            DESISTIR POR AGORA
-          </button>
-        )}
-
+        <div className="btn-row">
+          {status === "erro" && (
+            <button onClick={() => { setStatus("inicial"); setFalaAtual(questao.falaInicial); }} className="btn btn-primary flex-1">🔄 TENTAR NOVAMENTE</button>
+          )}
+          {status === "sucesso" && (
+            <button onClick={handleColetar} className="btn btn-accent flex-1">💾 GUARDAR NA MOCHILA</button>
+          )}
+          {status !== "sucesso" && (
+            <button type="button" onClick={onClose} className="btn btn-secondary">SAIR</button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,797 @@
+/* ==========================================================================
+   0. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS
+   ========================================================================== */
+:root {
+  --bg-main: #050508;
+  --bg-dialog: rgba(11, 12, 19, 0.95);
+  --primary: #e6053c;
+  --accent: #00f5d4;
+  --success: #00ff88;
+  --text-main: #ffffff;
+  --text-muted: #8a8a9d;
+  --border-neon: 2px solid #00f5d4;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+}
+
+/* Reutilizável: Animação de pulsar bordas/ícones */
+@keyframes pulseNeon {
+  from { text-shadow: 0 0 5px var(--success); box-shadow: 0 0 5px rgba(0, 255, 136, 0.2); }
+  to { text-shadow: 0 0 15px var(--success), 0 0 25px var(--success); box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes spriteEntrada { from { transform: translateX(-40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeInInternal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+
+/* ==========================================================================
+   1. TELA DE INÍCIO (Menu Principal)
+   ========================================================================== */
+.main-menu-stage {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 30% 50%, #1b0a26 0%, #070810 100%) !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 8%;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Linhas de grade cibernéticas sutis ao fundo */
+.main-menu-stage::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 245, 212, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.02) 1px, transparent 1px);
+  background-size: 35px 35px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Painel esquerdo que engloba o menu */
+.menu-side-box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+  background: rgba(14, 15, 24, 0.8);
+  padding: 40px;
+  border-radius: 12px;
+  border: 2px solid var(--primary);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 30px rgba(230, 5, 60, 0.25), inset 0 0 20px rgba(0, 245, 212, 0.05);
+}
+
+.menu-game-title {
+  margin: 0;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-size: 4.2rem;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: 3px;
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0px var(--accent);
+}
+
+.menu-game-subtitle {
+  margin: 5px 0 0 0;
+  font-family: monospace;
+  font-size: 1.2rem;
+  color: var(--accent);
+  letter-spacing: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(0, 245, 212, 0.5);
+}
+
+.menu-game-desc {
+  color: #ccd6f6;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 10px 0 15px 0;
+}
+
+/* Lista vertical de botões do menu */
+.menu-vertical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin: 10px 0 0 0;
+  list-style: none;
+}
+
+.menu-list-link {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 245, 212, 0.15) !important;
+  color: #b0bcd0 !important;
+  font-size: 1.1rem !important;
+  font-weight: bold;
+  padding: 14px 20px !important;
+  border-radius: 6px;
+  width: 100% !important;
+  box-sizing: border-box;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.25s ease !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.menu-list-link:hover {
+  color: #ffffff !important;
+  background: var(--primary);
+  border-color: var(--primary) !important;
+  transform: translateX(6px);
+  box-shadow: 0 0 15px rgba(230, 5, 60, 0.4);
+}
+
+.menu-list-link::before { display: none !important; }
+
+
+/* ==========================================================================
+   2. TELA SELETOR DE CAPÍTULOS (.menu-fullscreen)
+   ========================================================================== */
+.menu-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #160a2b 0%, #050508 100%) !important;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* Linhas de grade cibernéticas sutis para unificar com o Menu e Mochila */
+.menu-fullscreen::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 245, 212, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.015) 1px, transparent 1px);
+  background-size: 35px 35px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Efeito vermelho suave de fundo interdimensional */
+.menu-fullscreen::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at 70% 30%, rgba(230, 5, 60, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.seletor-layout-box {
+  width: 100%;
+  max-width: 1050px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Topo do Seletor */
+.seletor-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+
+.seletor-header-row h1, .seletor-header-row h2 {
+  color: #ffffff;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  margin: 0;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0px var(--primary);
+}
+
+/* Grid Organizador dos Cards das Fases */
+.fases-grid {
+  display: flex !important;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* Card Individual de Seleção de Fase - Estilo Módulo Sci-Fi */
+.fase-card-select {
+  background: rgba(14, 15, 24, 0.75) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(230, 5, 60, 0.2) !important;
+  border-top: 4px solid var(--accent) !important;
+  padding: 28px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 290px;
+  max-width: 320px;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.02);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* Borda superior verde quando concluído */
+.fase-card-select:has(.badge-fase-concluido),
+.fase-card-select:has([alt="concluido"]),
+.fase-card-select.concluido {
+  border-top-color: var(--success) !important;
+  border-color: rgba(0, 255, 136, 0.2) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.05), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.fase-card-select:hover {
+  border-color: var(--accent) !important;
+  transform: translateY(-6px);
+  background: rgba(20, 22, 36, 0.85) !important;
+  box-shadow: 0 15px 35px rgba(0, 245, 212, 0.15);
+}
+
+.fase-card-select h3 {
+  color: #ffffff;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 8px 0;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+/* Subtítulo ou tags de identificação no topo do card */
+.fase-card-select div:first-child {
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.card-footer-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+  margin-top: auto;
+}
+
+/* Links/Botões internos de ativação */
+.fase-card-select .vn-btn-ativar, 
+.fase-card-select span:last-child {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.fase-card-select:hover .vn-btn-ativar {
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--accent);
+}
+
+
+/* ==========================================================================
+   3. PALCO DA VISUAL NOVEL & CAIXA DE DIÁLOGO (.vn-dialog-box)
+   ========================================================================== */
+.vn-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  overflow: hidden;
+}
+
+.vn-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%);
+  z-index: 1;
+}
+
+/* Palco fixo dos bonecos grandes */
+.vn-sprite-stage {
+  position: absolute;
+  bottom: 145px;
+  left: 10%;
+  height: 72vh;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.vn-character-image {
+  height: 100%;
+  object-fit: contain;
+  animation: spriteEntrada 0.4s ease-out;
+}
+
+/* Container que segura a interface no rodapé */
+.vn-dialog-interface {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1100px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tag com o nome do herói */
+.vn-nametag {
+  background: var(--primary);
+  color: white;
+  padding: 8px 24px;
+  font-weight: bold;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 6px 6px 0 0;
+  display: inline-block;
+  box-shadow: 3px -3px 0px var(--accent);
+  width: fit-content;
+  border: none;
+}
+
+/* Altura travada em 140px previne qualquer deformação ou solavanco */
+.vn-dialog-box {
+  background: var(--bg-dialog);
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 20px rgba(230, 5, 60, 0.2), inset 0 0 15px rgba(0, 245, 212, 0.1);
+  border-radius: 0 12px 12px 12px;
+  padding: 20px 30px;
+  height: 140px; 
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  backdrop-filter: blur(8px);
+}
+
+/* Alinhamento vertical interno do bloco de textos */
+.vn-text-content-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.vn-main-speech {
+  color: #ffffff;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.vn-challenge-prompt {
+  color: var(--accent);
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 0;
+  text-shadow: 0 0 5px rgba(0, 245, 212, 0.3);
+}
+
+/* Área interativa da direita */
+.vn-interaction-zone {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.vn-form-inline {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+
+/* ==========================================================================
+   4. ELEMENTOS DE ENTRADA, POPUPS E BOTÕES GLOBAIS
+   ========================================================================== */
+.vn-input {
+  background: #050608;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: #ffffff;
+  font-size: 1rem;
+  width: 280px;
+  outline: none;
+  box-shadow: inset 0 0 8px rgba(0, 245, 212, 0.2);
+  transition: all 0.3s ease;
+}
+
+.vn-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 10px rgba(230, 5, 60, 0.5);
+}
+
+.vn-btn {
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.vn-btn-accent {
+  background: var(--accent);
+  color: #050608;
+}
+.vn-btn-accent:hover {
+  background: #33ffeb;
+  box-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
+}
+
+.vn-btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.vn-btn-primary:hover {
+  background: #ff1c4e;
+  box-shadow: 0 0 15px rgba(230, 5, 60, 0.4);
+}
+
+.vn-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #a0aec0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.vn-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+/* Modais e Popups internos (Settings / Créditos) */
+.modal-overlay-fullscreen {
+  position: absolute;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(5, 5, 8, 0.85);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-side-card {
+  background: #111116;
+  border: 2px solid var(--accent);
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 25px rgba(0, 245, 212, 0.15);
+}
+
+/* Auxiliares */
+.terminal-arrow { animation: blink 1s infinite; }
+.badge-fase-concluido { color: var(--success); font-weight: bold; text-transform: uppercase; }
+
+
+/* ==========================================================================
+   5. ANIMAÇÃO DE SUCESSO INTERNA (DENTRO DA DIALOG BOX)
+   ========================================================================== */
+.vn-success-inside-box {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeInInternal 0.25s ease-out;
+}
+
+.vn-success-message {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--success);
+  font-size: 1.15rem;
+}
+
+.vn-success-message p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.vn-success-message strong {
+  font-family: 'Impact', sans-serif;
+  letter-spacing: 1px;
+}
+
+.success-pulse-icon {
+  font-size: 1.5rem;
+  animation: pulseNeon 0.8s infinite alternate;
+}
+
+
+/* ==========================================================================
+   6. TERMINAL CORE
+   ========================================================================== */
+.terminal-core-stage {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #140d2b 0%, #050508 100%) !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-core-stage::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 245, 212, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.015) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.terminal-hud-box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 650px;
+  background: rgba(11, 12, 19, 0.95);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 25px rgba(0, 245, 212, 0.15);
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.terminal-core-stage h1 {
+  font-family: 'Impact', sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin-top: 0;
+  text-transform: uppercase;
+}
+
+.terminal-core-stage p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin-bottom: 30px;
+}
+
+.terminal-buffer-input {
+  width: 100%;
+  max-width: 400px;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--success);
+  font-family: monospace;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 14px;
+  border-radius: 6px;
+  margin: 15px auto 25px auto;
+  letter-spacing: 2px;
+}
+
+
+/* ==========================================================================
+   7. HUD MOCHILA: ESTILO INVENTÁRIO AAA
+   ========================================================================== */
+.mochila-stage {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #110924 0%, #050508 100%) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.mochila-stage::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 245, 212, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mochila-hud-box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 850px;
+  background: rgba(11, 12, 19, 0.95);
+  border: 2px solid var(--primary);
+  border-bottom: 4px solid var(--accent);
+  box-shadow: 0 0 40px rgba(230, 5, 60, 0.2), inset 0 0 20px rgba(0, 245, 212, 0.05);
+  padding: 40px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-sizing: border-box;
+}
+
+.mochila-header {
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.mochila-title-block {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 8px;
+}
+
+.mochila-icon {
+  font-size: 2rem;
+}
+
+.mochila-header h1 {
+  font-family: 'Impact', sans-serif;
+  font-size: 2.6rem;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin: 0;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0px var(--primary);
+}
+
+.mochila-header p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Grid do Inventário */
+.mochila-grid-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 35px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Card de Item Individual (Fragmento) */
+.mochila-item-card {
+  background: rgba(20, 21, 31, 0.6);
+  border: 1px solid rgba(0, 245, 212, 0.15);
+  border-left: 4px solid var(--accent);
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 15px;
+  cursor: grab;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.mochila-item-card:hover {
+  background: #171926;
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0, 245, 212, 0.15);
+}
+
+.mochila-item-card:active {
+  cursor: grabbing;
+}
+
+.item-tag-type {
+  font-family: monospace;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.item-fragment-code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffffff;
+  word-break: break-all;
+}
+
+.item-status-glow {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--success);
+  letter-spacing: 1px;
+}
+
+.mochila-footer {
+  display: flex;
+  justify-content: flex-start;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 25px;
+}
+
+/* Customização da Barra de Rolagem interna do Grid de Itens */
+.mochila-grid-items::-webkit-scrollbar,
+.menu-fullscreen::-webkit-scrollbar {
+  width: 6px;
+}
+.mochila-grid-items::-webkit-scrollbar-track,
+.menu-fullscreen::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+}
+.mochila-grid-items::-webkit-scrollbar-thumb,
+.menu-fullscreen::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}

@@ -1,28 +1,50 @@
 [
-    {
-        "id": "q1",
-        "titulo" : "Pergunta 1",
-        "prompt" : "Quem é o principal vilão de ORDEM paranormal? ",
-        "resposta" : ["Gal", "Kian", "Joui", "Anfitrião"],
-        "dica" : "",
-        "icon" : "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTRlYWFjN3AwcXFibjFibDFjNjE2cHcwM3g0Y2RjMmVuMm03NjZrYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F4E4Q13dUuGoRHbbh5/giphy.gif"
-    },
-
-    {
-        "id": "q2",
-        "titulo" : "Pergunta 2",
-        "prompt" : " Quem é o principal vilão de sinais do outro lado? ",
-        "resposta" : ["Anfitrião", "Amigo imaginário", "Estrangeiro", "Kian"],
-        "dica" : "",
-        "icon" : "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTRlYWFjN3AwcXFibjFibDFjNjE2cHcwM3g0Y2RjMmVuMm03NjZrYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F4E4Q13dUuGoRHbbh5/giphy.gif"
-    },
-
-    {
-        "id": "q3",
-        "titulo" : "Pergunta 3",
-        "prompt" : "qual dos integrantes da ordo calamitas ganhou os jogos do anfritrião?",
-        "resposta" : ["Faustus", "Amalia", "Celestine"],
-        "dica" : "",
-        "icon" : "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTRlYWFjN3AwcXFibjFibDFjNjE2cHcwM3g0Y2RjMmVuMm03NjZrYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F4E4Q13dUuGoRHbbh5/giphy.gif"
-    }
+  {
+    "id": "q1",
+    "personagem": "Miles Morales",
+    "sprite": "miles-focado.png",
+    "spriteSucesso": "miles-sorrindo.png",
+    "spriteErro": "miles-preocupado.png",
+    "titulo": "Anomalia na Brooklyn Vision",
+    "falaInicial": "Ei, mano! Que bom que você chegou. O meu 'Sentido Aranha' tá apitando bizarro aqui... Tem um colapso de código na rede da escola! Você manja de desenvolvimento Web pra me ajudar a fechar essa fenda?",
+    "prompt": "Me diz aí: qual protocolo garante que os pacotes de dados da teia cheguem sem erros e na ordem correta na Web?",
+    "resposta": ["TCP", "TCP/IP"],
+    "pistaCompleta": "MILES-MASTERS",
+    "pistaIncompleta": "M***S-******S",
+    "lat": -22.91379,
+    "lng": -47.06810,
+    "nomeLocal": "Laboratório de Redes"
+  },
+  {
+    "id": "q2",
+    "personagem": "Gwen Stacy",
+    "sprite": "gwen-seria.png",
+    "spriteSucesso": "gwen-feliz.png",
+    "spriteErro": "gwen-decepcionada.png",
+    "titulo": "Fenda na Dimensão da Spider-Gwen",
+    "falaInicial": "Bateu no teto o nível de radiação dimensional aqui na biblioteca! O Mancha deixou um rastro de dados criptografados. Se a gente errar a resposta, o fragmento vai corromper de vez...",
+    "prompt": "Qual tecnologia do ecossistema PWA permite que a nossa teia funcione perfeitamente mesmo se o celular ficar SEM REDE (Offline)?",
+    "resposta": ["Service Worker", "Service Workers", "ServiceWorker"],
+    "pistaCompleta": "SPIDER-VERSE",
+    "pistaIncompleta": "S****R-*****E",
+    "lat": -22.91395,
+    "lng": -47.06830,
+    "nomeLocal": "Biblioteca Central"
+  },
+  {
+    "id": "q3",
+    "personagem": "Peter B. Parker",
+    "sprite": "peter-comendo.png",
+    "spriteSucesso": "peter-orgulhoso.png",
+    "spriteErro": "peter-cansado.png",
+    "titulo": "Bug do Clarim Diário",
+    "falaInicial": "Escuta aqui, garoto... No meu tempo a gente não tinha essas modernidades de frameworks, era tudo no HTML puro! Mas preciso admitir, essa anomalia tá travando todo o meu painel. Dá uma força?",
+    "prompt": "Qual conceito focado em leitores de tela e tags semânticas corretas usamos para garantir que QUALQUER pessoa consiga jogar nosso jogo com acessibilidade?",
+    "resposta": ["Semantica", "Semântica", "Acessibilidade"],
+    "pistaCompleta": "COLLAPSE-FIXED",
+    "pistaIncompleta": "C******E-F***D",
+    "lat": -22.91410,
+    "lng": -47.06805,
+    "nomeLocal": "Oficina de Automação"
+  }
 ]

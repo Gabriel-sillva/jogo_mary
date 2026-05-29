@@ -1,144 +1,132 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState, useRef } from "react";
-import L from "leaflet"; // Garante que a instância global do Leaflet 'L' está acessível
+import QuestionDialog from "./QuestionDialog";
+import QUESTOES from "../data/perguntas.json";
 
-export default function Mapa() {
-    const centroInicial = [-22.913933, -47.00];
-    const [posicao, setPosicao] = useState(null);
-    const [erro, setErro] = useState("");
-    const [pontos, setPontos] = useState([]);
-    const idRef = useRef(1);
-    
-    const local = [-22.9137900, -47.0681000];
-    const zoomInicial = local ? 15 : 13;
+// Coordenadas fictícias simulando pontos dentro do SENAI Roberto Mange
+const PONTOS_REAIS = {
+  q1: { id: "q1", nome: "Laboratório Frontend", lat: -22.91379, lng: -47.06810, raio: 5 },
+  q2: { id: "q2", nome: "Biblioteca Secreta", lat: -22.91395, lng: -47.06830, raio: 5 },
+  q3: { id: "q3", nome: "Oficina de Automação", lat: -22.91410, lng: -47.06805, raio: 5 },
+};
 
-    function calcularDistanciaM(alvo, origem) {
-        if (!origem) return null;
-        const a = L.latLng(origem);
-        const b = L.latLng(alvo.lat, alvo.lng);
-        return a.distanceTo(b);
+export default function Mapa({ progresso, setProgresso, IrParaInventario, onReset }) {
+  const [minhaPosicao, setMinhaPosicao] = useState(null);
+  const [gpsAtivo, setGpsAtivo] = useState(true);
+  const [questoselecionada, setQuestoSelecionada] = useState(null);
+
+  useEffect(() => {
+    if (!("geolocation" in navigator)) {
+      setGpsAtivo(false);
+      return;
     }
 
-    function formatarM(metros) {
-        if (metros == null) return "--";
-        if (metros < 1000) return `${metros.toFixed(0)}m`;
-        return `${(metros / 1000).toFixed(2)}km`;
-    }
-
-    function adicionarPonto({ lat, lng }) {
-        const novo = {
-            id: idRef.current++,
-            lat,
-            lng,
-            distanciaM: calcularDistanciaM({ lat, lng }, local)
-        };
-        setPontos((prev) => [...prev, novo]);
-    }
-
-    function limparPontos() {
-        setPontos([]);
-        idRef.current = 1;
-    }
-
-    const pontosOrdenados = [...pontos].sort((a, b) => {
-        const da = a.distanciaM ?? Infinity;
-        const db = b.distanciaM ?? Infinity;
-        return da - db;
-    });
-
-    useEffect(() => {
-        if (!("geolocation" in navigator)) {
-            setErro("Seu navegador não tem suporte para geolocalização!");
-            return;
-        }
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                setPosicao({
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude, // Corrigido 'Ing' para 'lng'
-                });
-            },
-            () => {
-                setErro("Não foi possível obter sua localização.");
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 8000,
-                maximumAge: 0,
-            }
-        );
-    }, []);
-
-    function ClickHandler({ onAdd }) {
-        useMapEvents({
-            click(e) {
-                const { lat, lng } = e.latlng;
-                onAdd({ lat, lng });
-            },
-        });
-        return null;
-    }
-
-    return (
-        <section className="mapa" style={{ padding: '1rem' }}>
-            <h1 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>Mapa 🕸️</h1>
-
-            {erro && <div className="erro" style={{ color: 'var(--error)' }}>{erro}</div>}
-
-            <section className="painel" style={{ background: 'var(--bg2)', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}>
-                <div className="painel-topo" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <span>Pontos Adicionados</span>
-                    <button className="btn" style={{ background: 'var(--primary)', color: '#fff', padding: '4px 12px', fontSize: '0.85rem' }} onClick={limparPontos}>
-                        Limpar Pontos!
-                    </button>
-                </div>
-
-                {pontos.length === 0 ? (
-                    <p style={{ color: '#a0a0a5' }}>Nenhum ponto adicionado. Clique no mapa para adicionar</p>
-                ) : (
-                    <ul className="lista-pontos" style={{ listStyle: 'none' }}>
-                        {pontosOrdenados.map((p) => (
-                            <li key={p.id} className="lista-pontos-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
-                                <span>#{p.id}</span>
-                                <span>{p.lat.toFixed(5)}, {p.lng.toFixed(5)}</span>
-                                <span className="dist" style={{ color: 'var(--ring)', fontWeight: 'bold' }}>{formatarM(p.distanciaM)}</span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </section>
-
-            <MapContainer
-                center={posicao ? [posicao.lat, posicao.lng] : centroInicial}
-                zoom={zoomInicial}
-                scrollWheelZoom={true}
-                className="mapazinho"
-                style={{ height: '50vh', borderRadius: '12px', border: '3px solid var(--primary)' }}
-            >
-                <TileLayer
-                    attribution="&copy; OpenStreetMap"
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-
-                {local && (
-                    <Marker position={local}>
-                        <Popup>Você está aqui!</Popup>
-                    </Marker>
-                )}
-
-                {pontos.map((p) => (
-                    <Marker key={p.id} position={[p.lat, p.lng]}>
-                        <Popup>
-                            <div>
-                                <strong>Ponto #{p.id}</strong>
-                                <p>Distância: {formatarM(p.distanciaM)}</p>
-                            </div>
-                        </Popup>
-                    </Marker>
-                ))}
-                <ClickHandler onAdd={adicionarPonto} />
-            </MapContainer>
-        </section>
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const novaPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setMinhaPosicao(novaPos);
+        setGpsAtivo(true);
+        verificarProximidade(novaPos);
+      },
+      () => setGpsAtivo(false),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [progresso.quizesResolvidos]);
+
+  const verificarProximidade = (pos) => {
+    const latLngOrigem = L.latLng(pos.lat, pos.lng);
+    
+    QUESTOES.forEach((q) => {
+      const infoPonto = PONTOS_REAIS[q.id];
+      if (!infoPonto) return;
+      
+      const latLngAlvo = L.latLng(infoPonto.lat, infoPonto.lng);
+      const distancia = latLngOrigem.distanceTo(latLngAlvo);
+
+      if (distancia <= infoPonto.raio && !progresso.pontosDesbloqueados.includes(q.id)) {
+        setProgresso(prev => ({
+          ...prev,
+          pontosDesbloqueados: [...prev.pontosDesbloqueados, q.id]
+        }));
+      }
+    });
+  };
+
+  return (
+    <div className="game-screen">
+      <header className="game-header">
+        <div>
+          <h2>MAPA MÁGICO</h2>
+          <p className="status-gps">{gpsAtivo ? "🛰️ GPS CONECTADO" : "⚠️ MODO SEQUENCIAL (SEM GPS)"}</p>
+        </div>
+        <button className="btn-hud" onClick={IrParaInventario}>🎒 Inventário ({progresso.pistasColetadas.length})</button>
+      </header>
+
+      <div className="map-wrapper">
+        <MapContainer center={[-22.91379, -47.06810]} zoom={18} className="game-map">
+          <TileLayer 
+            attribution='&copy; OpenStreetMap' 
+            url="https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=YOUR_TOKEN" // Recomendo mapa escuro estilo hacker/cyberpunk
+          />
+          
+          {minhaPosicao && (
+            <Marker position={[minhaPosicao.lat, minhaPosicao.lng]}>
+              <Popup>Sua Localização Real</Popup>
+            </Marker>
+          )}
+
+          {QUESTOES.map((q) => {
+            const ponto = PONTOS_REAIS[q.id];
+            const isDesbloqueado = progresso.pontosDesbloqueados.includes(q.id) || !gpsAtivo;
+            const isResolvido = progresso.quizesResolvidos.includes(q.id);
+
+            if (!isDesbloqueado && gpsAtivo) return null; // Névoa de guerra: oculta pontos longe
+
+            return (
+              <React.Fragment key={q.id}>
+                <Circle 
+                  center={[ponto.lat, ponto.lng]} 
+                  radius={ponto.raio} 
+                  pathOptions={{ color: isResolvido ? 'var(--success)' : 'var(--primary)', fillColor: 'transparent' }} 
+                />
+                <Marker 
+                  position={[ponto.lat, ponto.lng]}
+                  eventHandlers={{
+                    click: () => {
+                      if (!isResolvido) setQuestoSelecionada(q);
+                    }
+                  }}
+                >
+                  <Popup>
+                    <div className="popup-game">
+                      <h3>{ponto.nome}</h3>
+                      <p>{isResolvido ? "✅ Mistério Resolvido!" : "❌ Clique para abrir o Quiz do Guardião"}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              </React.Fragment>
+            );
+          })}
+        </MapContainer>
+      </div>
+
+      <footer className="game-footer">
+        <p>Progresso Geral: {Math.round((progresso.quizesResolvidos.length / QUESTOES.length) * 100)}%</p>
+        <button className="btn-danger-sm" onClick={onReset}>Reiniciar Sistema</button>
+      </footer>
+
+      {questoselecionada && (
+        <QuestionDialog 
+          questoes={questoselecionada}
+          onClose={() => setQuestoSelecionada(null)}
+          progresso={progresso}
+          setProgresso={setProgresso}
+        />
+      )}
+    </div>
+  );
 }

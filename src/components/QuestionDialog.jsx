@@ -1,143 +1,119 @@
-import { useEffect, useState, useId, useRef } from "react";
+import React, { useState } from "react";
 
-export default function QuestionDialog({
-    questoes,
-    index,
-    total,
-    onClose,
-    onCorrect,
-}) {
-    const titleId = useId();
-    const closeBtn = useRef(null);
-    const prevFocus = useRef(null);
+export default function QuestionDialog({ questao, onClose, onResponderSucesso }) {
+  const [respostaUser, setRespostaUser] = useState("");
+  const [status, setStatus] = useState("inicial"); // 'inicial', 'sucesso', 'erro'
+  const [falaAtual, setFalaAtual] = useState(questao.falaInicial);
 
-    const [resposta, setResposta] = useState("");
-    const [feedback, setFeedback] = useState({ type: "info", msg: "" });
-    const [isCorrect, setIsCorrect] = useState(false);
+  if (!questao) return null;
 
-    const normalize = (s) =>
-        (s ?? "")
-            .toString()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[.,;:!?()\"'´^~]/g, "")
-            .trim()
-            .toLowerCase(); // Corrigido typo aqui
+  // Descobrir qual sprite exibir baseado no status da resposta
+  let spriteExibido = questao.sprite;
+  if (status === "sucesso") spriteExibido = questao.spriteSucesso;
+  if (status === "erro") spriteExibido = questao.spriteErro;
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+  const handleValidarResposta = (e) => {
+    e.preventDefault();
 
-        const user = normalize(resposta);
-        const ok = (questoes.resposta || []).some(
-            (resp) => normalize(resp) === user
-        );
-
-        if (ok) {
-            setIsCorrect(true);
-            setFeedback({ type: "success", msg: "Resposta correta! Próxima liberada." });
-        } else {
-            setIsCorrect(false);
-            setFeedback({ type: "error", msg: "Não foi dessa vez. Tente novamente!" });
-        }
-    };
-
-    useEffect(() => {
-        prevFocus.current = document.activeElement;
-
-        const prevOverflow = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-        closeBtn.current?.focus();
-
-        const onkey = (ev) => { if (ev.key === "Escape") onClose(); };
-        window.addEventListener("keydown", onkey);
-
-        return () => {
-            document.body.style.overflow = prevOverflow;
-            window.removeEventListener("keydown", onkey);
-            if (prevFocus.current instanceof HTMLElement) prevFocus.current.focus();
-        };
-    }, [onClose]);
-
-    return (
-        <div
-            id={`dialog-${questoes.id}`}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
-            className="dialog"
-        >
-            <header className="dialog-header">
-                <h2 id={titleId} className="dialog-title">
-                    {questoes.titulo}
-                </h2>
-                <p className="dialog-subtitle"> Pergunta {index + 1} de {total}</p>
-                <button
-                    ref={closeBtn}
-                    type="button"
-                    className="dialog-close"
-                    aria-label={`Fechar pergunta: ${questoes.titulo}`}
-                    onClick={onClose}
-                >
-                    X
-                </button>
-            </header>
-
-            <section className="dialog-content" tabIndex={-1}>
-                <div className="dialog-card">
-                    <p className="question-prompt">{questoes.prompt}</p>
-                    
-                    <form className="question-form" onSubmit={handleSubmit}>
-                        <label className="question-label" htmlFor="resposta">
-                            Sua resposta:
-                        </label>
-                        <input
-                            id="resposta"
-                            className="question-input"
-                            type="text"
-                            autoComplete="off"
-                            aria-describedby="feedback"
-                            aria-invalid={feedback.type === "error" ? "true" : "false"}
-                            value={resposta}
-                            onChange={(e) => setResposta(e.target.value)} // Corrigido de onChance
-                            disabled={isCorrect}
-                            placeholder="Escreva sua resposta aqui"
-                        />
-                        
-                        <div
-                            className={`question-feedback question-feedback--${feedback.type}`}
-                            id="feedback"
-                            aria-live="polite"
-                        >
-                            {feedback.msg}
-                        </div>
-
-                        {!isCorrect ? (
-                            <div className="question-actions" style={{ display: 'flex', gap: '10px' }}>
-                                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
-                                    Confirmar
-                                </button>
-                                <button className="btn" type="button" onClick={onClose} style={{ background: '#333', color: '#fff' }}>
-                                    Voltar
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="question-actions">
-                                <button
-                                    className="btn btn-primary"
-                                    style={{ width: '100%', background: 'var(--success)', color: 'var(--bg)' }}
-                                    type="button"
-                                    onClick={() => {
-                                        onCorrect(questoes.id);
-                                        onClose();
-                                    }}
-                                >
-                                    Avançar
-                                </button>
-                            </div>
-                        )}
-                    </form>
-                </div>
-            </section>
-        </div>
+    // Limpa espaços e transforma em maiúsculas para comparar sem erro de digitação
+    const respostaFormatada = respostaUser.trim().toUpperCase();
+    
+    // Verifica se o que o utilizador digitou existe dentro do array de respostas do teu JSON
+    const acertou = questao.resposta.some(
+      (resp) => resp.trim().toUpperCase() === respostaFormatada
     );
+
+    if (acertou) {
+      setStatus("sucesso");
+      setFalaAtual(`Caramba, você é gênio! Conseguimos fechar a fenda! Pegue isto, vai te ajudar no enigma final: a pista completa é "${questao.pistaCompleta}".`);
+    } else {
+      setStatus("erro");
+      setFalaAtual("Ih, deu ruim... Esse código não funcionou e a estabilização falhou. Tenta analisar com calma e tenta outra vez, sei que consegues!");
+    }
+  };
+
+  const handleConcluir = () => {
+    if (status === "sucesso") {
+      // Passa para o App.jsx que esta questão foi resolvida para libertar a recompensa/pista
+      onResponderSucesso(questao.id, questao.pistaCompleta);
+    }
+    onClose();
+  };
+
+  return (
+    <div className="quiz-overlay">
+      {/* Classe dinâmica injetada para mudar a cor da borda dependendo do acerto/erro */}
+      <div className={`quiz-modal ${status === "sucesso" ? "sucesso" : status === "erro" ? "erro" : ""}`}>
+        
+        {/* Cabeçalho da Missão */}
+        <div className="quiz-header">
+          <h3 className="quiz-title">⚠️ {questao.titulo}</h3>
+        </div>
+
+        {/* Zona do Personagem estilo Visual Novel */}
+        <div className="quiz-character-section">
+          <img 
+            src={`/${spriteExibido}`} 
+            alt={questao.personagem} 
+            className="quiz-character-sprite"
+            onError={(e) => {
+              e.target.src = "https://img.icons8.com/isometric/50/spider.png";
+            }}
+          />
+          <div className="quiz-dialogue-box">
+            <h4 className="quiz-character-name">{questao.personagem}</h4>
+            <p className="quiz-character-speech">"{falaAtual}"</p>
+          </div>
+        </div>
+
+        {/* Formulário de Resposta */}
+        {status !== "sucesso" && (
+          <form onSubmit={handleValidarResposta} className="quiz-modal" style={{ padding: 0, border: "none", boxShadow: "none" }}>
+            <div className="quiz-prompt-box">
+              <p className="quiz-prompt-text"><strong>DESAFIO:</strong> {questao.prompt}</p>
+            </div>
+            
+            <input 
+              type="text" 
+              className="quiz-input"
+              placeholder="Digita a tua resposta aqui..."
+              value={respostaUser}
+              onChange={(e) => setRespostaUser(e.target.value)}
+              disabled={status === "sucesso"}
+              autoFocus
+            />
+
+            <button type="submit" className="btn-quiz-submit">
+              📡 ENVIAR CÓDIGO DE CORREÇÃO
+            </button>
+          </form>
+        )}
+
+        {/* Mensagens de Feedback */}
+        {status === "sucesso" && (
+          <div className="quiz-feedback feedback-sucesso">
+            🎉 FENDA INTERCEPTADA COM SUCESSO!
+          </div>
+        )}
+        
+        {status === "erro" && (
+          <div className="quiz-feedback feedback-erro">
+            ❌ CÓDIGO INCORRETO. DETETADA REJEIÇÃO NA MATRIZ!
+          </div>
+        )}
+
+        {/* Botão de Ação de Fecho */}
+        {status === "sucesso" ? (
+          <button onClick={handleConcluir} className="btn-quiz-submit">
+            💾 COLETAR PISTA E CONTINUAR
+          </button>
+        ) : (
+          <button onClick={onClose} className="btn-quiz-close">
+            DESISTIR POR AGORA
+          </button>
+        )}
+
+      </div>
+    </div>
+  );
 }
